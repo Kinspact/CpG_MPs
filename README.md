@@ -16,18 +16,18 @@ ___
 
 * **Data Normalization**
 
-USAGE: Normalization [OPTION] {--m_u <c1,c2>|--r_t <c1,c2>} [-i <file|folder>] [-o <folder>]
+&emsp;&emsp; Normalization [OPTION] {--m_u <c1,c2>|--r_t <c1,c2>} [-i <file|folder>] [-o <folder>]
 
 * **Identification of Methylation Patterns of regions**
 
-USAGE: CpG_MPs [options] [-i <folder>] [-o <folder>]
+&emsp;&emsp;CpG_MPs [options] [-i <folder>] [-o <folder>]
 
 * **Identification of Differentially and Conserved Methylated Regions**
 
-USAGE: CpG_MPs_Dif_Con [options] [--patterns <folder_string>] [--methy <folder_string>] [-o <folder>]
+&emsp;&emsp;CpG_MPs_Dif_Con [options] [--patterns <folder_string>] [--methy <folder_string>] [-o <folder>]
 
 * **Calculation the sequence features of the regions of DNA methylation patterns**
 
-USAGE: Seq_Feature [--ref <folder>] [-i <folder>] [-o <folder>]
+&emsp;&emsp;Seq_Feature [--ref <folder>] [-i <folder>] [-o <folder>]
 
 >More details please read the User Guide of CpG_MPs v1.1.0.
