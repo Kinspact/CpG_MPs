@@ -1,5 +1,6 @@
 #CpG_MPs v1.1.0
 >CpG_MPs v1.1.0 is developed by Perl script wchich could be run in Linux or Window system. Users need to install Perl in the Window system before running the program.
+
 ___
 ####What is CpG_MPs
 CpG_MPs, is proposed for identification and analysis of CpG methylation patterns of genomic regions from high-throughput bisulfite sequencing data. It may identify the unmethylated and methylated regions for a single sample, the conserved and differential methylation regions with different methylation patterns for paired or multiple samples. 
@@ -19,4 +20,4 @@ USAGE: CpG_MPs_Dif_Con [options] [--patterns <folder_string>] [--methy <folder_s
 **4. Calculation the sequence features of the regions of DNA methylation patterns**
 USAGE: Seq_Feature [--ref <folder>] [-i <folder>] [-o <folder>]
 
-More details please read the User Guide of CpG_MPs v1.1.0.
+>More details please read the User Guide of CpG_MPs v1.1.0.
