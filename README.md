@@ -5,12 +5,15 @@ ___
 ####What is CpG_MPs
 CpG_MPs, is proposed for identification and analysis of CpG methylation patterns of genomic regions from high-throughput bisulfite sequencing data. It may identify the unmethylated and methylated regions for a single sample, the conserved and differential methylation regions with different methylation patterns for paired or multiple samples. 
 It includes four main modules as follows:
+
 1. Normalization of the sequencing reads of cytosines following guanines;
 2. Identification of the unmethylated (methylated) regions using hotspot extension algorithm;
 3. Identification of conservatively and differentially methylated regionsby combining the combinatorial algorithm for determination of potentially functional regions with the algorithm of analysis of variance (ANOVA) for assess the statistical significance of differentially methylated regions;
 4. Extraction of sequence features and visualization of these potentially functional regions.
+
 ___
 ####Command Line
+
 **1. Data Normalization**
 USAGE: Normalization [OPTION] {--m_u <c1,c2>|--r_t <c1,c2>} [-i <file|folder>] [-o <folder>]
 **2. Identification of Methylation Patterns of regions**
