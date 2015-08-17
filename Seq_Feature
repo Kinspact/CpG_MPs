@@ -1,0 +1,191 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Getopt::Long;
+use File::Basename;
+#####Arguments########
+my (
+	$help,
+	
+	$Reference_genome_folder,
+	$Input_data_folder,
+	$SequenceFeature_output_folder
+);
+GetOptions(
+	'help|man|h' => \$help,
+	
+	'ref=s'   => \$Reference_genome_folder,
+	'i|indir=s'   => \$Input_data_folder,
+	'o|outdir=s'   => \$SequenceFeature_output_folder,
+);
+print_helpfile() if($help);
+required_args($Reference_genome_folder,	$Input_data_folder, $SequenceFeature_output_folder);
+
+outdir_control($SequenceFeature_output_folder);
+indir_control($Input_data_folder);
+indir_control($Reference_genome_folder);
+
+
+
+###Arguments########
+my @PatternPath=glob("$Input_data_folder/*.patterns");
+my $countfile = @PatternPath;
+for(my $fileNumber=0;$fileNumber<$countfile;$fileNumber++)
+{
+my $file_name = basename($PatternPath[$fileNumber]);
+$file_name =~ s/.patterns//;
+my $chr = $file_name;
+###print "$getchr[$getchrlen-2]\n";
+open(IN1,"$Reference_genome_folder/$chr.fa") or die "can't open reference genome sequence $!\n";
+open(IN2,"$PatternPath[$fileNumber]") or die "can't open methylation pattern Path $!\n";
+open(OUT,">$SequenceFeature_output_folder/$chr.seqf") or die "$!\n";
+my %tree = ();
+my %treeSE = ();
+my $line = <IN1>;
+my $treeNumber=0;
+#$tree{$treeNumber}="";
+while($line = <IN1>)
+{
+  chomp $line;
+  $tree{$treeNumber}="";
+  $tree{$treeNumber} = $tree{$treeNumber}."$line";
+  for(my $i=1;$i<200;$i++)
+  {
+  	my $line1=<IN1>;
+  	if($line1){
+       chomp $line1;
+    $tree{$treeNumber} = $tree{$treeNumber}."$line1";
+  		}
+  else{
+  	last;
+  	}
+  }
+  $treeNumber++;
+}
+close(IN1);
+my $lli=<IN2>;
+chomp($lli);
+print OUT "$lli\tGC_content\tCpG_OE\n";
+while(<IN2>)
+{
+ chomp $_;
+ my @array = split(/\t/,$_);
+ my $p=$array[1]/10000;
+ my $q=$array[2]/10000;
+ my $before = int($array[1]/10000);
+ my $behind = int($array[2]/10000);
+ my $s=0;
+ my $seq="";
+ my $len=0;
+ my $tag="";
+ my $CpGnum=0;
+ my $numC=0;
+ my $numG=0;
+ my $GCcontent=0;
+ my $o_e=0;
+  if($p==$before)
+  {$before=$p-1;
+ }
+  if($q==$behind)
+  {$behind=$q-1;
+  }
+  if($before == $behind)
+  {
+     $s = $array[1] % 10000;
+     $s=$s-1;
+     $len = $array[2] - $array[1] + 1;
+     $seq = substr($tree{$before},$s,$len);
+      $CpGnum=$seq=~s/CG/cg/ig;
+      $numC=$seq=~s/C/c/ig;
+      $numG=$seq=~s/G/g/ig;
+      $GCcontent=($numC+$numG)/$len;
+      $o_e=$CpGnum*$len/($numC*$numG);
+     print OUT "$_\t$GCcontent\t$o_e\n";
+     $seq = "";
+     next;
+  }
+  if($before < $behind)
+  {
+     $len = $array[2] - $array[1] + 1;
+     $s = $array[1] % 10000;
+     $s=$s-1;
+     $tag = substr($tree{$before},$s);
+     $seq = $seq."$tag";
+     for(my $i=$before+1;$i<$behind;$i++)
+     {
+       $seq = $seq."$tree{$i}";
+     }
+    my $e = $array[2] % 10000;
+     $tag = substr($tree{$behind},0,$e);
+     $seq = $seq."$tag";
+      $CpGnum=$seq=~s/CG/cg/ig;
+      $numC=$seq=~s/C/c/ig;
+      $numG=$seq=~s/G/g/ig;
+      $GCcontent=($numC+$numG)/$len;
+      $o_e=$CpGnum*$len/($numC*$numG);
+       print OUT "$_\t$GCcontent\t$o_e\n";
+      $seq = "";
+  }
+}
+
+close(IN1);
+close(IN2);
+close(OUT);
+}
+sub print_helpfile{
+	print qq(
+---------------------------------- HELP ---------------------------------------
+This tool help you get sequence feature for methylation patterns.
+-------------------
+USAGE: Seq_Feature [--ref <folder>] [-i <folder>] [-o <folder>]
+-------------------
+ARGUMENTS:
+	--help,--man,-h
+				display the helpfile.
+ I/O:
+	--ref
+				the reference genome folder(.fa).REQUIRED
+	-i,--indir
+				the input directory, methylation patterns folder. REQUIRED
+	-o,--outdir
+				the output directory.REQUIRED
+-------------------
+EXAMPLE:
+ BRIEF(only required arguements):
+	Seq_Feature --ref ref_genome_folder -i patterns/ -o seq_feature/
+	  get sequence feature for methylation patterns in patterns/.
+ 
+ OUTPUT:
+	the output will like this(chr1.seqf):
+		Chrosome        Start_position  End_position    Methylation_pattern     Length  Average_methylation_level       Variance        GC_content   CpG_OE
+		chr1    3000574 3329885 1       329312  0.897   0.118   0.389521183558449       0.146981950106983
+		chr1    3334584 3470553 1       135970  0.889   0.110   0.380260351548136       0.120034873515113
+		chr1    3473945 3539119 1       65175   0.890   0.115   0.388937476026084       0.138771040623581
+		chr1    3540334 3638079 1       97746   0.909   0.093   0.384077097784053       0.125952462499578
+-------------------------------------------------------------------------------
+);
+	die "\n";
+}
+sub outdir_control{		#if outdir doesn't exist, create it. 
+	my $outdir = $_[0];
+	if(!-e $outdir){	
+		mkdir $outdir or die "Can't create $outdir!\nPlease check up this path.\n";
+	}
+}
+sub indir_control{		#indir doesn't exist, report error 
+	my $indir = $_[0];
+	if(!-e $indir){		
+		die "$indir doesn't exist!\nPlease check up this path.\n";
+	}
+}
+
+sub required_args{		#( @array )
+	my @arr = @_;
+	foreach my $args(@arr){
+		unless($args){
+			print "Lack required arguments.\n";
+			print_helpfile();
+		}
+	}
+}
+
