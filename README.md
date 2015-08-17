@@ -17,12 +17,15 @@ ___
 1. **Data Normalization**
 
 USAGE: Normalization [OPTION] {--m_u <c1,c2>|--r_t <c1,c2>} [-i <file|folder>] [-o <folder>]
+
 2. **Identification of Methylation Patterns of regions**
 
 USAGE: CpG_MPs [options] [-i <folder>] [-o <folder>]
+
 3. **Identification of Differentially and Conserved Methylated Regions**
 
 USAGE: CpG_MPs_Dif_Con [options] [--patterns <folder_string>] [--methy <folder_string>] [-o <folder>]
+
 4. **Calculation the sequence features of the regions of DNA methylation patterns**
 
 USAGE: Seq_Feature [--ref <folder>] [-i <folder>] [-o <folder>]
