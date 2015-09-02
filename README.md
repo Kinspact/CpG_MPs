@@ -1,5 +1,6 @@
 #CpG_MPs v1.1.0
 >CpG_MPs v1.1.0 is developed by Perl script wchich could be run in Linux or Window system. Users need to install Perl in the Window system before running the program.
+[Home Page](http://kinspact.github.io/CpG_MPs)
 
 ___
 ####What is CpG_MPs
